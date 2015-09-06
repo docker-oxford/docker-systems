@@ -1,0 +1,20 @@
+---
+- hosts: localhost
+
+  vars:
+    - os: {
+        "ubuntu_trusty":
+          { "vagrant_machine": "ubuntu/trusty64" },
+        "ubuntu_precise":
+          { "vagrant_machine": "hashicorp/precise64" }
+      }
+
+  tasks:
+  - name: build vagrantfile
+    template:
+      src: Vagrantfile.j2
+      dest: ./Vagrantfile
+
+
+  - name: launch vagrant machine and provision with playbook
+    command: "vagrant up --provision"
