@@ -1,0 +1,37 @@
+---
+- name: add Docker repository key
+  apt_key:
+    id: "58118E89F3A912897C070ADBF76221572C52609D"
+    keyserver: "hkp://p80.pool.sks-keyservers.net:80"
+    state: present
+
+- name: ensure docker repo is added
+  apt_repository:
+    repo='deb https://apt.dockerproject.org/repo ubuntu-{{ ansible_distribution_release }} main'
+    update_cache: yes #triggers a reload of cache if repo is updated
+
+- name: ensure old docker is purged
+  apt:
+    name: "lxc-docker*"
+    state: absent
+    purge: yes
+
+- name: ensure docker is installed
+  apt:
+    name: "docker-engine"
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: start docker
+  service:
+    name: docker
+    state: started
+
+- name: ensure pip is latest
+  apt:
+    name: "python-pip"
+    state: latest
+
+- name: ensure docker-py is installed
+  pip:
+    name: "docker-py==1.2.3"
