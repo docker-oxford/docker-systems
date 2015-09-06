@@ -7,7 +7,7 @@
 
 - name: ensure docker repo is added
   apt_repository:
-    repo='deb https://apt.dockerproject.org/repo ubuntu-{{ ansible_distribution_release }} main'
+    repo: "deb https://apt.dockerproject.org/repo ubuntu-{{ ansible_distribution_release }} main"
     update_cache: yes #triggers a reload of cache if repo is updated
 
 - name: ensure old docker is purged
