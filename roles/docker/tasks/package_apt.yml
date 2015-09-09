@@ -1,5 +1,10 @@
 ---
-- name: add Docker repository key
+#- name: ensure apt-transport-https is latest
+#  apt:
+#    name: apt-transport-https
+#    update_cache: yes #ensure that cache is up to date
+#    cache_valid_time: 3600 #1 hour should suffice
+- name: add docker repository key
   apt_key:
     id: "58118E89F3A912897C070ADBF76221572C52609D"
     keyserver: "hkp://p80.pool.sks-keyservers.net:80"
@@ -10,11 +15,14 @@
     repo: "deb https://apt.dockerproject.org/repo ubuntu-{{ ansible_distribution_release }} main"
     update_cache: yes #triggers a reload of cache if repo is updated
 
+- name: check if old docker is lurking
+  shell: "dpkg -l lxc-docker*"
+  ignore_errors: yes
+  register: purge_we_must
+
 - name: ensure old docker is purged
-  apt:
-    name: "lxc-docker*"
-    state: absent
-    purge: yes
+  shell: "apt-get purge lxc-docker* -y"
+  when: purge_we_must | success
 
 - name: ensure docker is installed
   apt:
